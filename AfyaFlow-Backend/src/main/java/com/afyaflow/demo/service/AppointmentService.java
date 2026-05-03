@@ -94,6 +94,11 @@ public class AppointmentService {
         return repository.findByDoctorId(doctorId);
     }
 
+    public Doctor getDoctorByEmail(String email) {
+        if (email == null) return null;
+        return doctorRepository.findByEmail(email).orElse(null);
+    }
+
     /**
      * Returns available time slots for a doctor on a given date.
      * It subtracts already-booked slots from the full slot list.
@@ -227,12 +232,12 @@ public class AppointmentService {
         try {
             Appointment savedAppt = repository.save(appt);
 
-            // If appointment is for today, put patient in queue immediately
-            if (savedAppt.getAppointmentDate().equals(LocalDate.now())) {
-                patient.setStatus("queued");
-                patient.setDepartment(savedAppt.getDepartmentName());
-                patientRepository.save(patient);
-            }
+            // Always put patient in queue when appointment is CONFIRMED
+            // Store the assigned doctor name so the doctor's dashboard can filter by it
+            patient.setStatus("queued");
+            patient.setDepartment(savedAppt.getDepartmentName());
+            patient.setAssignedDoctor(assignedDoctor.getName());
+            patientRepository.save(patient);
 
             // Create notification for patient
             if (patient.getEmail() != null) {
@@ -315,6 +320,30 @@ public class AppointmentService {
         // Use a 10-digit random number as requested: AFYA-1407832147
         long randomNum = (long) (Math.random() * 9_000_000_000L) + 1_000_000_000L;
         return "AFYA-" + randomNum;
+    }
+
+    @SuppressWarnings("null")
+    public Appointment rescheduleAppointment(Long id, String dateStr, String time, String status) {
+        if (id == null) return null;
+        Appointment appt = repository.findById(id).orElseThrow(() -> new RuntimeException("Appointment not found"));
+        if (dateStr != null) appt.setAppointmentDate(LocalDate.parse(dateStr));
+        if (time != null) appt.setTimeSlot(time);
+        if (status != null) appt.setStatus(status);
+        
+        Appointment savedAppt = repository.save(appt);
+
+        // Notify user
+        Patient p = appt.getPatient();
+        if (p != null && p.getEmail() != null) {
+            userRepository.findByEmail(p.getEmail()).ifPresent(user -> {
+                notificationService.createNotification(
+                        user,
+                        "Appointment Rescheduled",
+                        "Your appointment for " + appt.getDepartmentName() + " has been successfully rescheduled to " + appt.getAppointmentDate() + " at " + appt.getTimeSlot() + ".",
+                        "INFO");
+            });
+        }
+        return savedAppt;
     }
 
     public void cancelAppointment(Long id) {

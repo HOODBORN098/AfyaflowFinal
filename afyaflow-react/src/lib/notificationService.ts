@@ -29,6 +29,7 @@ export interface NewAppointment {
   patientId: number;
   department: string;
   appointmentTime: string;
+  date: string;
   reason: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'in-progress';
   createdAt: string;
@@ -96,6 +97,12 @@ export const startDoctorAppointmentMonitoring = (
         return;
       }
 
+      // Guard: ensure backend returned JSON, not an HTML error page
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        return;
+      }
+
       const rawAppointments: any[] = await response.json();
 
       const appointments: NewAppointment[] = rawAppointments.map((a) => ({
@@ -106,7 +113,8 @@ export const startDoctorAppointmentMonitoring = (
           'Patient',
         patientId: a.patient?.id,
         department: a.departmentName,
-        appointmentTime: `${a.appointmentDate} ${a.appointmentTime}`,
+        appointmentTime: `${a.appointmentDate} ${a.timeSlot || ''}`.trim(),
+        date: a.appointmentDate,
         reason: a.patient?.reason || 'Consultation',
         // FIX: backend may return 'in-progress' — include it in the union type above
         status: (a.status?.toLowerCase() || 'pending') as NewAppointment['status'],

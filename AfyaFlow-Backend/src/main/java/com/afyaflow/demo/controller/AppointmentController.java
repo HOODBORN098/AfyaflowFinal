@@ -55,7 +55,16 @@ public class AppointmentController {
     @GetMapping
     public List<Appointment> getAppointments(
             @RequestParam(required = false) Long patientId,
-            @RequestParam(required = false) Long doctorId) {
+            @RequestParam(required = false) Long doctorId,
+            Principal principal) {
+        
+        if (principal != null) {
+            com.afyaflow.demo.model.Doctor currentDoctor = service.getDoctorByEmail(principal.getName());
+            if (currentDoctor != null) {
+                return service.getAppointmentsByDoctor(currentDoctor.getId());
+            }
+        }
+
         if (patientId != null) {
             return service.getAppointmentsByPatient(patientId);
         } else if (doctorId != null) {
@@ -129,10 +138,34 @@ public class AppointmentController {
     @org.springframework.web.bind.annotation.PutMapping("/{id}/confirm")
     public ResponseEntity<Boolean> confirmAppointment(
             @org.springframework.web.bind.annotation.PathVariable Long id,
-            @RequestBody java.util.Map<String, Long> body) {
-        Long doctorId = body.get("doctorId");
+            @RequestBody(required = false) java.util.Map<String, Long> body,
+            Principal principal) {
+        Long doctorId = body != null ? body.get("doctorId") : null;
+        
+        if (principal != null) {
+            com.afyaflow.demo.model.Doctor currentDoctor = service.getDoctorByEmail(principal.getName());
+            if (currentDoctor != null) {
+                doctorId = currentDoctor.getId();
+            }
+        }
+        
+        if (doctorId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        
         boolean success = service.confirmAppointment(id, doctorId);
         return ResponseEntity.ok(success);
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    public ResponseEntity<Appointment> updateAppointment(
+            @org.springframework.web.bind.annotation.PathVariable Long id,
+            @RequestBody java.util.Map<String, String> body) {
+        String date = body.get("date");
+        String time = body.get("time");
+        String status = body.get("status");
+        Appointment updated = service.rescheduleAppointment(id, date, time, status);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/{id}/queue-status")

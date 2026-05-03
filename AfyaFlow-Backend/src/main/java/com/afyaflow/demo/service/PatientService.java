@@ -104,6 +104,10 @@ public class PatientService {
         if (dto.getReferralsJson() != null) existing.setReferralsJson(dto.getReferralsJson());
         if (dto.getConsultationNotes() != null) existing.setConsultationNotes(dto.getConsultationNotes());
         if (dto.getDiagnosis() != null) existing.setDiagnosis(dto.getDiagnosis());
+        if (dto.getDepartment() != null) existing.setDepartment(dto.getDepartment());
+        if (dto.getAssignedDoctor() != null) existing.setAssignedDoctor(dto.getAssignedDoctor());
+        if (dto.getStatus() != null) existing.setStatus(dto.getStatus());
+        if (dto.getPriority() != null) existing.setPriority(dto.getPriority());
         
         Patient saved = patientRepository.save(existing);
         auditService.log("PATIENT_PROFILE_UPDATED", "Patient", saved.getId().toString(), 

@@ -99,12 +99,19 @@ const DoctorDashboard: React.FC = () => {
   };
 
   // ========== QUEUE LOGIC ==========
+  const isAdminOrReceptionist = user?.role === 'Admin' || user?.role === 'Receptionist';
   const queue = patients
-    .filter(
-      (p) =>
-        (p.status === 'queued' || p.status === 'in-progress') &&
-        (!user?.department || p.department === user.department)
-    )
+    .filter((p) => {
+      if (!(p.status === 'queued' || p.status === 'in-progress')) return false;
+      // Admin & Receptionist see the full queue
+      if (isAdminOrReceptionist) return true;
+      // Doctor: if patient has an assigned doctor, match by name
+      if (p.assignedDoctor && user?.username) {
+        return p.assignedDoctor.toLowerCase() === user.username.toLowerCase();
+      }
+      // Fallback for walk-in patients (no specific doctor assigned): match by department
+      return p.department?.toLowerCase() === user?.department?.toLowerCase();
+    })
     .filter(
       (p) =>
         !search ||
@@ -144,7 +151,7 @@ const DoctorDashboard: React.FC = () => {
   };
 
   const servedToday = patients.filter(
-    (p) => p.status === 'served' && (!user?.department || p.department === user.department)
+    (p) => p.status === 'served' && (!user?.department || user?.role === 'Admin' || user?.role === 'Receptionist' || p.department?.toLowerCase() === user.department.toLowerCase())
   ).length;
 
   const admissionQueue = patients.filter(
@@ -290,7 +297,7 @@ const DoctorDashboard: React.FC = () => {
                         )}
                       </div>
                       <p className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">
-                        {patient.priority !== 'standard' ? `${patient.priority.toUpperCase()} • ` : ''}
+                        {patient.priority && patient.priority !== 'standard' ? `${patient.priority.toUpperCase()} • ` : ''}
                         {patient.department} •{' '}
                         {new Date(patient.registeredAt).toLocaleTimeString([], {
                           hour: '2-digit',
@@ -447,13 +454,13 @@ const DoctorDashboard: React.FC = () => {
                         <span className="material-symbols-outlined text-sm">call</span>
                         {activePatient.phone}
                       </span>
-                      {activePatient.priority !== 'standard' && (
+                      {activePatient.priority && activePatient.priority !== 'standard' && (
                         <span
                           className={`flex items-center gap-1 text-xs font-bold ${activePatient.priority === 'emergency' ? 'text-error' : 'text-secondary'
                             }`}
                         >
                           <span className="material-symbols-outlined text-sm">priority_high</span>
-                          {activePatient.priority.toUpperCase()}
+                          {(activePatient.priority || '').toUpperCase()}
                         </span>
                       )}
                     </div>
@@ -490,10 +497,10 @@ const DoctorDashboard: React.FC = () => {
                   "{activePatient.reason}"
                 </p>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <StatusChip label={activePatient.department.toUpperCase()} variant="info" />
-                  {activePatient.priority !== 'standard' && (
+                  <StatusChip label={(activePatient.department || 'General').toUpperCase()} variant="info" />
+                  {activePatient.priority && activePatient.priority !== 'standard' && (
                     <StatusChip
-                      label={activePatient.priority.toUpperCase()}
+                      label={(activePatient.priority || '').toUpperCase()}
                       variant={activePatient.priority === 'emergency' ? 'error' : ('warning' as any)}
                     />
                   )}
@@ -674,7 +681,7 @@ const DoctorDashboard: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    <StatusChip label={bed.department.toUpperCase()} variant="neutral" />
+                    <StatusChip label={(bed.department || '').toUpperCase()} variant="neutral" />
                   </div>
                 ))
               )}
@@ -713,7 +720,7 @@ const DoctorDashboard: React.FC = () => {
             </p>
             <button
               onClick={() => setIsReferring(true)}
-              disabled={!activePatient || activePatient.status !== 'in-progress'}
+              disabled={!activePatient}
               className="bg-white text-primary px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-opacity-90 transition-all disabled:opacity-50"
             >
               Refer Patient

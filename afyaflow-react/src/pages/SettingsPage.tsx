@@ -38,11 +38,21 @@ const SettingsPage: React.FC = () => {
   const [showAddShift, setShowAddShift] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 
+  const [shiftForm, setShiftForm] = useState({ staff: '', role: 'Doctor', department: '', date: today, shiftType: 'Morning', start: '08:00', end: '16:00' });
+  const [notifSettings, setNotifSettings] = useState({ newPatient: true, statusChange: true, referral: false, systemAlerts: true, emailDigest: false });
+
+  const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfilePhoto(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   // Profile form state
   const [profileForm, setProfileForm] = useState({
     username: user?.username || '',
     email: user?.email || '',
     department: user?.department || '',
+    bio: '',
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -198,7 +208,9 @@ const SettingsPage: React.FC = () => {
                   className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/40 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none" />
               </div>
               <div className="flex justify-end">
-                <SignatureButton onClick={handleProfileSave} icon="save">Save Changes</SignatureButton>
+                <SignatureButton onClick={handleProfileSave} icon="save">
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                </SignatureButton>
               </div>
             </DashboardCard>
           )}

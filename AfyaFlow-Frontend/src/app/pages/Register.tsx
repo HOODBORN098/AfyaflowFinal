@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity, Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar } from 'lucide-react';
+import { Activity, Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar, Contact } from 'lucide-react';
 import { toast } from 'sonner';
 import { registerApi, roleToRoute } from '../../lib/api';
 import { setAuthSession } from '../../lib/authStorage';
@@ -207,9 +207,7 @@ function getPasswordStrength(password: string) {
                 National ID / Passport
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[20px] text-muted-foreground">id_card</span>
-                </div>
+                <Contact className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   id="nationalId"
                   type="text"
@@ -231,7 +229,10 @@ function getPasswordStrength(password: string) {
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   id="dob"
-                  type="date"
+                  type="text"
+                  placeholder="Date of Birth (YYYY-MM-DD)"
+                  onFocus={(e) => (e.target.type = "date")}
+                  onBlur={(e) => (e.target.type = e.target.value ? "date" : "text")}
                   value={formData.dob}
                   onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                   className="w-full pl-10 pr-4 py-3 bg-muted border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
