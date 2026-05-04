@@ -178,8 +178,8 @@ public class AppointmentService {
                     return patientRepository.save(p);
                 });
 
-        // CRITICAL: Ensure legacy patients also get the new 10-digit token format
-        if (patient.getPatientCode() == null || !patient.getPatientCode().startsWith("AFYA-")) {
+        // CRITICAL: Ensure legacy patients also get the new sequential token format
+        if (patient.getPatientCode() == null || !patient.getPatientCode().startsWith("AFY-")) {
             patient.setPatientCode(generateTokenId());
             patient = patientRepository.save(patient);
         }
@@ -317,9 +317,8 @@ public class AppointmentService {
     }
 
     private String generateTokenId() {
-        // Use a 10-digit random number as requested: AFYA-1407832147
-        long randomNum = (long) (Math.random() * 9_000_000_000L) + 1_000_000_000L;
-        return "AFYA-" + randomNum;
+        long count = patientRepository.count();
+        return String.format("AFY-%03d", count + 1);
     }
 
     @SuppressWarnings("null")

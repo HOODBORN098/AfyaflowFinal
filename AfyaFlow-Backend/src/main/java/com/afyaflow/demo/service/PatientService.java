@@ -124,8 +124,7 @@ public class PatientService {
     }
 
     private String generateTokenId() {
-        // Use a 10-digit random number as requested: AFYA-1407832147
-        long randomNum = (long)(Math.random() * 9_000_000_000L) + 1_000_000_000L;
-        return "AFYA-" + randomNum;
+        long count = patientRepository.count();
+        return String.format("AFY-%03d", count + 1);
     }
 }
