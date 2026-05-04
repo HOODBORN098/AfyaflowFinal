@@ -178,7 +178,7 @@ const AdminDashboard: React.FC = () => {
   const inProgress = patients.filter(p => p.status === 'in-progress').length; // Currently being seen
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
 
       {/* Dashboard Header */}
       <div className="flex justify-between items-end">
@@ -254,7 +254,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="h-64 w-full" style={{ minHeight: 256 }}>
+          <div className="h-48 w-full" style={{ minHeight: 192 }}>
             <ResponsiveContainer width="99%" height="100%">
               <BarChart data={volumeData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
@@ -372,11 +372,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           </DashboardCard>
 
-          <div className="bg-gradient-to-br from-secondary to-on-secondary-container p-6 rounded-xl text-white">
-            <h4 className="font-bold mb-2">Staff Briefing</h4>
-            <p className="text-sm opacity-80 mb-4">Mandatory hygiene protocol review today at 4:00 PM in Seminar Room A.</p>
-            <button className="w-full py-2 bg-white/20 hover:bg-white/30 transition-all rounded font-bold text-sm">Confirm Attendance</button>
-          </div>
+
         </div>
       </div>
 

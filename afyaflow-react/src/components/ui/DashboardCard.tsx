@@ -28,7 +28,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       className={`
       ${variantClasses[variant]} 
       rounded-2xl
-      ${noPadding ? '' : 'p-8'} 
+      ${noPadding ? '' : 'p-5'} 
       shadow-xl shadow-slate-200/40 dark:shadow-none 
       border border-slate-100 dark:border-slate-800
       hover:border-teal-500/30 dark:hover:border-teal-500/30

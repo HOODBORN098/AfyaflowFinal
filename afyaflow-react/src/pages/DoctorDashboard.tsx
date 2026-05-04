@@ -180,7 +180,7 @@ const DoctorDashboard: React.FC = () => {
     (patient.name || `${patient.firstName || ''} ${patient.lastName || ''}`).trim();
 
   return (
-    <div className="grid grid-cols-12 gap-8">
+    <div className="grid grid-cols-12 gap-6">
 
       {/* ── New Appointment Alert Toast ── */}
       {showAppointmentAlert && appointmentAlert && (
@@ -228,7 +228,7 @@ const DoctorDashboard: React.FC = () => {
       {/* ══════════════════════════════════════════════
           LEFT SIDE: Patient Queue
       ══════════════════════════════════════════════ */}
-      <section className="col-span-12 lg:col-span-4 space-y-6">
+      <section className="col-span-12 lg:col-span-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-primary">Patient Queue</h2>
@@ -547,7 +547,7 @@ const DoctorDashboard: React.FC = () => {
               </div>
 
               {/* Vitals Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 {activePatient.vitals && activePatient.vitals.length > 0 ? (
                   (() => {
                     const v = activePatient.vitals[activePatient.vitals.length - 1];
@@ -558,7 +558,7 @@ const DoctorDashboard: React.FC = () => {
                       { label: 'Temp', value: v.temperature, unit: '°C', icon: 'thermostat' },
                     ];
                     return vitalUI.map((vital, i) => (
-                      <div key={i} className="bg-surface-container-low p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+                      <div key={i} className="bg-surface-container-low p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                             {vital.label}
@@ -647,7 +647,7 @@ const DoctorDashboard: React.FC = () => {
         </DashboardCard>
 
         {/* ── Inpatient & Bed Management ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Admission Queue */}
           <DashboardCard className="p-6 border-l-4 border-amber-500">
             <div className="flex items-center justify-between mb-6">
