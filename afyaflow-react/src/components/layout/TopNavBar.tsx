@@ -90,9 +90,9 @@ const TopNavBar: React.FC<Props> = ({ isSidebarCollapsed, toggleSidebar }) => {
           <span className="material-symbols-outlined">{isSidebarCollapsed ? 'menu_open' : 'menu'}</span>
         </button>
         <div className="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full w-96 focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
-        <Search className="w-5 h-5 text-outline" />
+        <Search className="w-5 h-5 text-slate-400 dark:text-white/60" />
         <input 
-          className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline" 
+          className="bg-transparent border-none focus:ring-0 text-sm w-full text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40" 
           placeholder="Global search..." 
           type="text"
           value={searchQuery}
@@ -174,8 +174,8 @@ const TopNavBar: React.FC<Props> = ({ isSidebarCollapsed, toggleSidebar }) => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3 group">
             <div className="text-right">
-              <p className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">{displayUser.name}</p>
-              <p className="text-[10px] text-on-surface-variant font-medium uppercase tracking-wider">{displayUser.role}</p>
+              <p className="text-xs font-bold text-slate-800 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{displayUser.name}</p>
+              <p className="text-[10px] text-slate-500 dark:text-white/60 font-medium uppercase tracking-wider">{displayUser.role}</p>
             </div>
             <img 
               alt="User Avatar" 
