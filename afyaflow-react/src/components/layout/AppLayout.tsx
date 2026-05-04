@@ -16,7 +16,7 @@ const AppLayout: React.FC = () => {
       {isAuthenticated && <SideNavBar isCollapsed={isSidebarCollapsed} />}
       <div className="flex-1 flex flex-col min-h-screen">
         {isAuthenticated && <TopNavBar isSidebarCollapsed={isSidebarCollapsed} toggleSidebar={toggleSidebar} />}
-        <main className={`flex-1 transition-all duration-300 ${isAuthenticated ? (isSidebarCollapsed ? 'ml-20' : 'ml-64') + ' pt-16 p-8' : ''}`}>
+        <main className={`flex-1 transition-all duration-300 ${isAuthenticated ? (isSidebarCollapsed ? 'ml-20' : 'ml-64') + ' pt-24 p-10' : ''}`}>
           <div className={isAuthenticated ? 'max-w-[1600px] mx-auto' : ''}>
             <Outlet />
           </div>

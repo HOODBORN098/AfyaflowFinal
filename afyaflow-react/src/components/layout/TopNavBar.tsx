@@ -84,7 +84,7 @@ const TopNavBar: React.FC<Props> = ({ isSidebarCollapsed, toggleSidebar }) => {
   };
 
   return (
-    <header className={`fixed top-0 right-0 h-16 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none flex justify-between items-center px-8 transition-all duration-300 ${isSidebarCollapsed ? 'left-20' : 'left-64'}`}>
+    <header className={`fixed top-0 right-0 h-16 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-md dark:shadow-none flex justify-between items-center px-8 transition-all duration-300 ${isSidebarCollapsed ? 'left-20' : 'left-64'}`}>
       <div className="flex items-center gap-4">
         <button onClick={toggleSidebar} className="p-2 rounded-lg text-slate-500 hover:bg-surface-container-low transition-colors">
           <span className="material-symbols-outlined">{isSidebarCollapsed ? 'menu_open' : 'menu'}</span>
