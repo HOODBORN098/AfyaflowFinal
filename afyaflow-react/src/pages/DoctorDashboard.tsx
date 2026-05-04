@@ -263,7 +263,7 @@ const DoctorDashboard: React.FC = () => {
             queue.map((patient, i) => (
               <div
                 key={patient.id}
-                className={`p-4 bg-surface-container-lowest rounded-xl shadow-sm border-l-4 transition-colors group cursor-pointer hover:bg-surface-container-low text-on-surface
+                className={`p-4 bg-surface-container-lowest rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 transition-colors group cursor-pointer hover:bg-surface-container-low text-on-surface
                   ${patient.status === 'in-progress'
                     ? 'border-primary bg-primary/5'
                     : patient.priority === 'emergency'
@@ -345,7 +345,7 @@ const DoctorDashboard: React.FC = () => {
         </div>
 
         {/* ── Upcoming Appointments ── */}
-        <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/10 shadow-sm">
+        <div className="bg-surface-container-lowest p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-lg shadow-slate-200/40 dark:shadow-none">
           <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined text-sm">event_note</span>
             Upcoming Appointments
@@ -431,7 +431,7 @@ const DoctorDashboard: React.FC = () => {
         </div>
 
         {/* Waitlist Stats */}
-        <div className="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/10 shadow-sm">
+        <div className="bg-surface-container-lowest p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-lg shadow-slate-200/40 dark:shadow-none">
           <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined text-sm">bar_chart</span>
             Waitlist Stats
@@ -528,7 +528,7 @@ const DoctorDashboard: React.FC = () => {
               </div>
 
               {/* Chief Complaint */}
-              <div className="mb-8 p-4 bg-surface-container-low rounded-xl">
+              <div className="mb-8 p-6 bg-surface-container-low rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                 <p className="text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant mb-2">
                   Chief Complaint
                 </p>
@@ -558,7 +558,7 @@ const DoctorDashboard: React.FC = () => {
                       { label: 'Temp', value: v.temperature, unit: '°C', icon: 'thermostat' },
                     ];
                     return vitalUI.map((vital, i) => (
-                      <div key={i} className="bg-surface-container-low p-5 rounded-2xl border-b-4 border-secondary">
+                      <div key={i} className="bg-surface-container-low p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                             {vital.label}
@@ -666,7 +666,7 @@ const DoctorDashboard: React.FC = () => {
                 admissionQueue.map((patient) => (
                   <div
                     key={patient.id}
-                    className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/10"
+                    className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">

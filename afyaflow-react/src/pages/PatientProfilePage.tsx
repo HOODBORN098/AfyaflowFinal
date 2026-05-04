@@ -101,8 +101,8 @@ const PatientProfilePage: React.FC = () => {
               <button key={p.id}
                 onClick={() => { setSelected(p); setActiveTab('history'); }}
                 className={`w-full text-left p-4 rounded-2xl border transition-all ${selected?.id === p.id
-                  ? 'border-primary bg-primary/5 shadow-sm'
-                  : 'border-outline-variant/20 bg-surface-container-lowest hover:border-primary/30 hover:bg-surface-container-low'}`}>
+                  ? 'border-primary bg-primary/5 shadow-md scale-[1.02]'
+                  : 'border-slate-100 bg-surface-container-lowest hover:border-teal-500/30 hover:bg-surface-container-low shadow-sm'}`}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
                     {p.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -195,7 +195,7 @@ const PatientProfilePage: React.FC = () => {
                       {visits.map((v, i) => (
                         <div key={i} className="relative mb-8 last:mb-0">
                           <div className="absolute -left-[1.35rem] top-1 w-3 h-3 rounded-full bg-primary border-2 border-white" />
-                          <div className="bg-surface-container-low rounded-2xl p-5 space-y-3">
+                          <div className="bg-surface-container-low rounded-3xl p-6 space-y-3 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="font-extrabold text-on-surface text-sm">{v.diagnosis}</p>
@@ -227,7 +227,7 @@ const PatientProfilePage: React.FC = () => {
                   vitals.length > 0 ? (
                     <div className="space-y-4">
                       {vitals.map((v, i) => (
-                        <div key={i} className="bg-surface-container-low rounded-2xl p-5">
+                        <div key={i} className="bg-surface-container-low rounded-3xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                           <p className="text-[10px] text-on-surface-variant font-semibold mb-3">{new Date(v.recordedAt).toLocaleString()}</p>
                           <div className="grid grid-cols-3 gap-4">
                             {[
@@ -258,7 +258,7 @@ const PatientProfilePage: React.FC = () => {
                   selected.prescriptions && selected.prescriptions.length > 0 ? (
                     <div className="space-y-3">
                       {selected.prescriptions.map(rx => (
-                        <div key={rx.id} className="flex items-start gap-4 p-4 bg-surface-container-low rounded-2xl">
+                        <div key={rx.id} className="flex items-start gap-4 p-5 bg-surface-container-low rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                           <span className="material-symbols-outlined text-primary text-xl mt-0.5">medication</span>
                           <div className="flex-1">
                             <p className="font-bold text-on-surface">{rx.medicineName} <span className="font-normal text-on-surface-variant">— {rx.dosage}</span></p>
@@ -279,7 +279,7 @@ const PatientProfilePage: React.FC = () => {
                   selected.referrals && selected.referrals.length > 0 ? (
                     <div className="space-y-3">
                       {selected.referrals.map(ref => (
-                        <div key={ref.id} className="p-4 bg-surface-container-low rounded-2xl space-y-2">
+                        <div key={ref.id} className="p-5 bg-surface-container-low rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm space-y-2">
                           <div className="flex justify-between items-start">
                             <div>
                               <p className="font-bold text-on-surface">→ {ref.toSpecialty}</p>

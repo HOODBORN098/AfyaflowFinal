@@ -42,7 +42,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appt, onConfir
     };
 
     return (
-        <div className="flex justify-between items-center p-3 bg-surface-container-low rounded-xl border border-outline-variant/5 group">
+        <div className="flex justify-between items-center p-4 bg-white dark:bg-surface-container-low rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-teal-500/30 transition-all duration-300 group">
             <div>
                 <p className="text-sm font-bold text-on-surface">{appt.patientName}</p>
                 <p className="text-[10px] text-on-surface-variant font-medium">

@@ -27,10 +27,12 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       onClick={onClick}
       className={`
       ${variantClasses[variant]} 
-      rounded-xl 
+      rounded-2xl
       ${noPadding ? '' : 'p-8'} 
-      shadow-[24px_24px_48px_-4px_rgba(24,28,28,0.05)] 
-      border border-outline-variant/10
+      shadow-xl shadow-slate-200/40 dark:shadow-none 
+      border border-slate-100 dark:border-slate-800
+      hover:border-teal-500/30 dark:hover:border-teal-500/30
+      transition-all duration-300
       ${className}
     `}>
       {children}
