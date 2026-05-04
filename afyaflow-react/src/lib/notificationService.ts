@@ -47,7 +47,10 @@ export interface QueueStats {
 const activePollers: Map<string, ReturnType<typeof setInterval>> = new Map();
 
 // ========== NOTIFICATION CACHE ==========
-const appointmentCache: Map<number, number> = new Map();
+// Stores appointment IDs that have already triggered a notification.
+// Using a Set means each appointment only ever fires ONE toast, no matter
+// how many polling cycles elapse afterwards.
+const seenAppointmentIds: Set<number> = new Set();
 
 /**
  * START MONITORING DOCTOR APPOINTMENTS
@@ -127,25 +130,12 @@ export const startDoctorAppointmentMonitoring = (
       }
 
       // ========== CHECK FOR NEW APPOINTMENTS ==========
+      // Only fire the toast callback for appointments we have never seen before.
+      // Once an ID is in seenAppointmentIds it will never trigger another alert.
       for (const appointment of appointments) {
-        const lastSeen = appointmentCache.get(appointment.id);
-        // Skip appointments seen within the last polling window
-        if (lastSeen && Date.now() - lastSeen < pollingInterval) {
-          continue;
-        }
-
-        appointmentCache.set(appointment.id, Date.now());
-
-        // FIX: Pass only the single appointment — removed erroneous second argument
+        if (seenAppointmentIds.has(appointment.id)) continue;
+        seenAppointmentIds.add(appointment.id);
         onNewAppointment(appointment);
-      }
-
-      // ========== CLEANUP OLD CACHE ENTRIES ==========
-      const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
-      for (const [apptId, timestamp] of appointmentCache.entries()) {
-        if (timestamp < twoHoursAgo) {
-          appointmentCache.delete(apptId);
-        }
       }
     } catch (error) {
       console.error('Error polling appointments:', error);
@@ -296,7 +286,8 @@ export const stopAllPolling = (): void => {
 
 /**
  * CLEAR NOTIFICATION CACHE
+ * Call this on logout so the next login session starts fresh.
  */
 export const clearNotificationCache = (): void => {
-  appointmentCache.clear();
+  seenAppointmentIds.clear();
 };

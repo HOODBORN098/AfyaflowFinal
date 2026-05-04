@@ -185,6 +185,7 @@ interface DataContextType {
     fetchWards: () => Promise<void>;
     fetchDepartments: () => Promise<void>;
     fetchAuditLogs: () => Promise<void>;
+    refreshPatients: () => Promise<void>;
     isAssignedToBed: (patientId: string) => boolean;
     updateDoctor: (id: string, data: any) => Promise<void>;
     deleteDoctor: (id: string) => Promise<void>;
@@ -332,6 +333,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ward.beds?.some((bed) => bed.patientId === patientId && bed.status === 'occupied')
         );
     }, [wards]);
+
+    /**
+     * Immediately reload patients from the backend.
+     * Call this after confirming an appointment so the queue reflects the
+     * new "queued" status without waiting for the 10-second polling cycle.
+     */
+    const refreshPatients = useCallback(async () => {
+        try {
+            const response = await patientApi.getAll();
+            const backendPatients = response.data.map((p: any) => ({
+                ...p,
+                id: String(p.id),
+                vitals: p.vitalsJson ? JSON.parse(p.vitalsJson) : [],
+                prescriptions: p.prescriptionsJson ? JSON.parse(p.prescriptionsJson) : [],
+                referrals: p.referralsJson ? JSON.parse(p.referralsJson) : [],
+            }));
+            setPatients(backendPatients);
+        } catch (error) {
+            console.error('Manual patient refresh failed:', error);
+        }
+    }, []);
 
     const updatePatientStatus = useCallback(async (id: string, status: PatientStatus, extra?: Partial<Patient>) => {
         try {
@@ -550,6 +572,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 fetchWards,
                 fetchDepartments,
                 fetchAuditLogs,
+                refreshPatients,
                 isAssignedToBed,
                 updateDoctor,
                 deleteDoctor,

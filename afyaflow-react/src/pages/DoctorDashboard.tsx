@@ -24,7 +24,7 @@ import { startDoctorAppointmentMonitoring, confirmAppointment, type NewAppointme
  */
 
 const DoctorDashboard: React.FC = () => {
-  const { patients, updatePatientStatus, addPrescription, addReferral, wards, isAssignedToBed } = useData();
+  const { patients, updatePatientStatus, addPrescription, addReferral, wards, isAssignedToBed, refreshPatients } = useData();
   const { searchQuery, setSearchQuery } = useSearch();
   const { user } = useAuth();
   const [search, setSearch] = useState(searchQuery);
@@ -85,6 +85,9 @@ const DoctorDashboard: React.FC = () => {
       if (success) {
         setServedNotice('Appointment confirmed and added to queue');
         setTimeout(() => setServedNotice(null), 3000);
+        // Immediately refresh the patient list so the queue updates right away
+        // instead of waiting up to 10 seconds for the background poll cycle.
+        await refreshPatients();
       }
     } catch (error) {
       console.error('Error confirming appointment:', error);
@@ -350,43 +353,79 @@ const DoctorDashboard: React.FC = () => {
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {upcomingAppointments.length === 0 ? (
               <p className="text-xs text-on-surface-variant italic py-4 text-center">
-                No upcoming bookings for today.
+                No upcoming bookings.
               </p>
             ) : (
-              upcomingAppointments
+              [...upcomingAppointments]
                 .filter((a) => a.status !== 'cancelled')
-                .map((appt) => (
-                  <div
-                    key={appt.id}
-                    className="p-3 bg-surface-container-low rounded-xl border border-outline-variant/5 flex justify-between items-center group"
-                  >
-                    <div>
-                      <p className="text-sm font-bold text-on-surface">{appt.patientName}</p>
-                      <p className="text-[10px] text-on-surface-variant font-medium">
-                        {appt.appointmentTime || 'Scheduled'}
-                      </p>
-                    </div>
+                // Sort soonest appointment first so the doctor can see what's coming up
+                .sort((a, b) => {
+                  const da = new Date(`${a.date}T${a.appointmentTime?.split(' ')[1] || '00:00'}`).getTime();
+                  const db = new Date(`${b.date}T${b.appointmentTime?.split(' ')[1] || '00:00'}`).getTime();
+                  return da - db;
+                })
+                .map((appt) => {
+                  const apptDate = appt.date ? new Date(appt.date + 'T00:00:00') : null;
+                  const today = new Date();
+                  const isToday =
+                    apptDate &&
+                    apptDate.getFullYear() === today.getFullYear() &&
+                    apptDate.getMonth() === today.getMonth() &&
+                    apptDate.getDate() === today.getDate();
+                  const isPast = apptDate && apptDate < new Date(today.toDateString());
+                  return (
+                    <div
+                      key={appt.id}
+                      className={`p-3 rounded-xl border flex justify-between items-center group ${
+                        isToday
+                          ? 'bg-primary/5 border-primary/20'
+                          : isPast
+                          ? 'bg-surface-container-low border-outline-variant/5 opacity-60'
+                          : 'bg-surface-container-low border-outline-variant/5'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="text-sm font-bold text-on-surface">{appt.patientName}</p>
+                          {isToday && (
+                            <span className="text-[9px] bg-primary text-white px-1.5 py-0.5 rounded font-bold uppercase">
+                              Today
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-on-surface-variant font-medium">
+                          {appt.date
+                            ? new Date(appt.date + 'T00:00:00').toLocaleDateString([], {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                              })
+                            : 'Scheduled'}{' '}
+                          {appt.appointmentTime?.split(' ')[1] || ''}
+                        </p>
+                      </div>
 
-                    {/* FIX: Single clean conditional — no orphaned fragments */}
-                    {appt.status === 'in-progress' ? (
-                      <span className="text-[9px] bg-primary text-white px-1.5 py-0.5 rounded font-bold uppercase">
-                        Active
-                      </span>
-                    ) : appt.status === 'pending' || appt.status === 'confirmed' ? (
-                      <button
-                        onClick={() => handleConfirmAppointment(appt.id)}
-                        className="opacity-0 group-hover:opacity-100 bg-primary/10 text-primary p-2 rounded-lg transition-all"
-                        title="Admit to Queue"
-                      >
-                        <span className="material-symbols-outlined text-sm">login</span>
-                      </button>
-                    ) : (
-                      <span className="material-symbols-outlined text-secondary text-sm">
-                        check_circle
-                      </span>
-                    )}
-                  </div>
-                ))
+                      {/* Single clean conditional — no orphaned fragments */}
+                      {appt.status === 'in-progress' ? (
+                        <span className="text-[9px] bg-primary text-white px-1.5 py-0.5 rounded font-bold uppercase">
+                          Active
+                        </span>
+                      ) : appt.status === 'pending' || appt.status === 'confirmed' ? (
+                        <button
+                          onClick={() => handleConfirmAppointment(appt.id)}
+                          className="opacity-0 group-hover:opacity-100 bg-primary/10 text-primary p-2 rounded-lg transition-all"
+                          title="Admit to Queue"
+                        >
+                          <span className="material-symbols-outlined text-sm">login</span>
+                        </button>
+                      ) : (
+                        <span className="material-symbols-outlined text-secondary text-sm">
+                          check_circle
+                        </span>
+                      )}
+                    </div>
+                  );
+                })
             )}
           </div>
         </div>
